@@ -1,0 +1,16 @@
+.card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 500px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    /* Adjust the height as needed */
+}
+
+
+.card-container:hover {
+    transform: scale(1.05);
+    background-color: #effdf8;
+    /* A slightly darker shade */
+}
