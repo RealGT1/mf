@@ -1,74 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import Layout from '../Graph/components/Layout';
-import ScaleLoader from 'react-spinners/ScaleLoader';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const FundDetails = () => {
-    const { isin } = useParams();
-    const [fund, setFund] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchFundDetails = async () => {
-            try {
-                const response = await axios.get(`http://127.0.0.1:5000/api/fund/${isin}`);
-                console.log('Fetched fund details:', response.data); // Debug log
-                if (response.data && response.data.length > 0) {
-                    setFund(response.data[0]); // Set the first element of the array as fund
-                    setLoading(false);
-                } else {
-                    setError('No fund data available.');
-                    setLoading(false);
-                }
-            } catch (error) {
-                console.error('Error fetching fund details:', error); // Debug log
-                setError('Failed to fetch fund details. Please try again.');
-                setLoading(false);
-            }
-        };
-
-        fetchFundDetails();
-    }, [isin]);
-
-
-    if (loading) {
-        return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh'
-            }}>
-
-                <ScaleLoader color="#36d7b7" />
-            </div>
-        );
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { fund } = location.state || {};
 
     if (!fund) {
-        return <div>No fund data available.</div>;
+        return <div>No fund details available. <button onClick={() => navigate(-1)}>Go Back</button></div>;
     }
 
     return (
-
-        <div className="fund-details">
-            <h1>{fund.name}</h1>
-            <p><strong>CRISIL Rating:</strong> {fund.crisil_rating}</p>
-            <p><strong>Category:</strong> {fund.fund_category}</p>
-            <p><strong>Manager:</strong> {fund.fund_manager}</p>
-            <p><strong>Type:</strong> {fund.fund_type}</p>
-            <p><strong>NAV Date:</strong> {fund.nav.date}</p>
-            <p><strong>NAV Value:</strong> {fund.nav.nav}</p>
-            <p><strong>1 Year Return:</strong> {fund.returns ? fund.returns.year_1 : 'N/A'}%</p>
-            <p><strong>3 Year Return:</strong> {fund.returns ? fund.returns.year_3 : 'N/A'}%</p>
-            <p><strong>5 Year Return:</strong> {fund.returns ? fund.returns.year_5 : 'N/A'}%</p>
-            {/* Add more details as needed */}
+        <div className="container mx-auto px-4 py-8">
+            <div className="bg-white shadow-md rounded-lg p-6">
+                <h2 className="text-2xl font-bold mb-4">{fund.name}</h2>
+                <p><strong>ISIN:</strong> {fund.isin}</p>
+                <p><strong>CRISIL Rating:</strong> {fund.crisil_rating}</p>
+                <p><strong>Category:</strong> {fund.fund_category}</p>
+                <p><strong>Manager:</strong> {fund.fund_manager}</p>
+                <p><strong>Type:</strong> {fund.fund_type}</p>
+                <p><strong>NAV Date:</strong> {fund.nav_date}</p>
+                <p><strong>NAV Value:</strong> {fund.nav_value}</p>
+                <p><strong>1 Year Return:</strong> {fund.returns.year_1}%</p>
+                <p><strong>3 Year Return:</strong> {fund.returns.year_3}%</p>
+                <p><strong>5 Year Return:</strong> {fund.returns.year_5}%</p>
+                <p><strong>Fund Code:</strong> {fund.code}</p>
+                <p><strong>Expense Ratio:</strong> {fund.expense_ratio}</p>
+            </div>
         </div>
     );
 };

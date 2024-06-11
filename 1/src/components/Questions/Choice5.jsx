@@ -50,24 +50,29 @@ export default function Choice5({ initialselectedOptions }) {
       answerOptions: [
         {
           answerText:
-            "High Dividend Returns: Seeking regular income from high dividend-yielding stocks.", key: "a",
+            "High Dividend Returns: Seeking regular income from high dividend-yielding stocks.",
+          key: "a",
         },
         {
           answerText:
-            "Market Trends: Following broader market indices or sectors.", key: "b",
+            "Market Trends: Following broader market indices or sectors.",
+          key: "b",
         },
         {
           answerText:
-            "Risk and Flexibility: Investing or shifting between across various markets based on market conditions.", key: "c",
+            "Risk and Flexibility: Investing or shifting between across various markets based on market conditions.",
+          key: "c",
         },
         { answerText: "Tax Efficiency: Looking for tax-saving options.", key: "d", },
         {
           answerText:
-            "Value and Turnaround: Investing in undervalued or out-of-favor stocks with potential for growth.", key: "e",
+            "Value and Turnaround: Investing in undervalued or out-of-favor stocks with potential for growth.",
+          key: "e",
         },
         {
           answerText:
-            "Investment strategies for efficiency: arbitrage, ETFs, focused investing, or diversification", key: "f",
+            "Investment strategies for efficiency: arbitrage, ETFs, focused investing, or diversification",
+          key: "f",
         },
       ],
     },
@@ -77,26 +82,32 @@ export default function Choice5({ initialselectedOptions }) {
       answerOptions: [
         {
           answerText:
-            "Growth with Balance: Aiming for growth with a balanced approach.", key: "a",
+            "Growth with Balance: Aiming for growth with a balanced approach.",
+          key: "a",
         },
         {
           answerText:
-            "Opportunistic Returns: Exploiting market price differences.", key: "b",
+            "Opportunistic Returns: Exploiting market price differences.",
+          key: "b",
         },
         {
           answerText:
-            "Adaptive Strategy: Adjusting allocation based on market conditions.", key: "c",
+            "Adaptive Strategy: Adjusting allocation based on market conditions.",
+          key: "c",
         },
         {
           answerText:
-            "Preservation with Potential: Focusing on capital preservation with some growth potential.", key: "d",
+            "Preservation with Potential: Focusing on capital preservation with some growth potential.",
+          key: "d",
         },
         {
-          answerText: "Tax-efficient Growth: Seeking growth with tax benefits.", key: "e",
+          answerText: "Tax-efficient Growth: Seeking growth with tax benefits.",
+          key: "e",
         },
         {
           answerText:
-            "Aggressive Growth with Balance: Balancing growth potential with a more aggressive investment strategy.", key: "f",
+            "Aggressive Growth with Balance: Balancing growth potential with a more aggressive investment strategy.",
+          key: "f",
         },
       ],
     },
@@ -107,19 +118,23 @@ export default function Choice5({ initialselectedOptions }) {
         { answerText: "Very low risk, suitable for short-term investments.", key: "a", },
         {
           answerText:
-            "Low to moderate risk, suitable for medium-term investments.", key: "b",
+            "Low to moderate risk, suitable for medium-term investments.",
+          key: "b",
         },
         {
           answerText:
-            "Moderate to high risk, suitable for long-term investments.", key: "c",
+            "Moderate to high risk, suitable for long-term investments.",
+          key: "c",
         },
         {
           answerText:
-            "Higher risk, focuses on corporate and banking bonds with higher returns.", key: "d",
+            "Higher risk, focuses on corporate and banking bonds with higher returns.",
+          key: "d",
         },
         {
           answerText:
-            "Varying risk, adjusts based on market conditions or specific goals.", key: "e",
+            "Varying risk, adjusts based on market conditions or specific goals.",
+          key: "e",
         },
       ],
     },
@@ -129,43 +144,56 @@ export default function Choice5({ initialselectedOptions }) {
       answerOptions: [
         {
           answerText:
-            "Focuses on bonds and other debt instruments, generally lower risk.", key: "a",
+            "Focuses on bonds and other debt instruments, generally lower risk.",
+          key: "a",
         },
         {
           answerText:
-            "Focuses on stocks, higher risk, potential for higher returns.", key: "b",
+            "Focuses on stocks, higher risk, potential for higher returns.",
+          key: "b",
         },
         {
           answerText:
-            "Invests in gold, can be used as a hedge against inflation.", key: "c",
+            "Invests in gold, can be used as a hedge against inflation.",
+          key: "c",
         },
         {
           answerText:
-            "Invests in a mix of assets, diversified portfolio, moderate risk.", key: "d",
+            "Invests in a mix of assets, diversified portfolio, moderate risk.",
+          key: "d",
         },
         { answerText: "Targets specific sectors or strategies, varying risk.", key: "e" },
       ],
-    }
+    },
   };
+
   useEffect(() => {
     console.log(selectedOptions);
   }, [selectedOptions]);
 
   const handleAnswerButtonClick = (key) => {
-    const nextQuestion = nextQuestions[key];
-
-    if (nextQuestion) {
-      setQuestions((prevQuestions) => [...prevQuestions, nextQuestion]);
-      setCurrentQuestion((prevQuestion) => prevQuestion + 1);
-    } else {
+    if (key === "option5") {
       setShowScore(true);
-      navigate('/result', { state: { selectedOptions } }); // Navigate to result page
+      console.log(selectedOptions); // Debugging: Verify selectedOptions before navigation
+      navigate('/result', { state: { selectedOptions: { ...selectedOptions, "Which type of investment are you most interested in?": key } } });
     }
+    else {
+      const nextQuestion = nextQuestions[key];
 
-    setSelectedOptions((prevSelectedOptions) => ({
-      ...prevSelectedOptions,
-      [questions[currentQuestion].questionText]: key,
-    }));
+      if (nextQuestion) {
+        setQuestions((prevQuestions) => [...prevQuestions, nextQuestion]);
+        setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+      } else {
+        setShowScore(true);
+        console.log(selectedOptions)
+        navigate('/result', { state: { selectedOptions } });
+      }
+
+      setSelectedOptions((prevSelectedOptions) => ({
+        ...prevSelectedOptions,
+        [questions[currentQuestion].questionText]: key,
+      }));
+    }
   };
 
   return (

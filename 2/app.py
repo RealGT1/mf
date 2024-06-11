@@ -9,6 +9,9 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
+# In-memory cache to store top 5 funds details
+top_5_funds_cache = []
+
 async def fetch_data(session, isin):
     try:
         async with session.get(f'https://mf.captnemo.in/kuvera/{isin}', timeout=aiohttp.ClientTimeout(total=10)) as response:
@@ -108,30 +111,11 @@ def determine_category_subcategory(selectedOptions):
 
     return category, subcategory
 
-async def fetch_data1(isin):
-    url = f'https://mf.captnemo.in/kuvera/{isin}'
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                return await response.json()
-            else:
-                return None
-
-@app.route('/api/fund/<isin>', methods=['GET'])
-def get_fund_details(isin):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    fund_details = loop.run_until_complete(fetch_data1(isin))
-
-    if fund_details:
-        return jsonify(fund_details)
-    else:
-        return jsonify({'error': 'Fund not found'}), 404
-    
-
 
 @app.route('/api/recommend', methods=['POST'])
 def recommend():
+    global top_5_funds_cache
+
     selectedOptions = request.json
     print('Selected Options:', selectedOptions)
     category, subcategory = determine_category_subcategory(selectedOptions)
@@ -160,52 +144,45 @@ def recommend():
     asyncio.set_event_loop(loop)
     combined_data = loop.run_until_complete(fetch_all_data(isin_numbers))
 
-    # Check if there are any successful responses
     if not combined_data:
         print('No successful responses received.')
         return jsonify({'error': 'No successful responses received.'}), 500
 
-    # Prepare data for ranking
     columns = ['isin', 'code', 'name', 'fund_category', 'nav_value', 'nav_date', 'volatility', 'returns', 'expense_ratio', 'aum', 'portfolio_turnover', 'fund_type', 'plan', 'fund_manager', 'crisil_rating', 'investment_objective', 'maturity_type']
     df_combined = pd.DataFrame(combined_data, columns=columns)
 
-    # Ensure DataFrame is not empty
     if df_combined.empty:
         print('Combined DataFrame is empty after fetching data.')
         return jsonify({'error': 'No valid data to process.'}), 500
 
-    # Handle missing 5-year returns by filling with NaN and then forward filling
     df_combined['returns_5_year'] = pd.to_numeric(df_combined['returns'].apply(lambda x: x.get('year_5', np.nan)), errors='coerce')
     df_combined['returns_3_year'] = pd.to_numeric(df_combined['returns'].apply(lambda x: x.get('year_3', np.nan)), errors='coerce')
     df_combined['returns_1_year'] = pd.to_numeric(df_combined['returns'].apply(lambda x: x.get('year_1', np.nan)), errors='coerce')
 
-    # Normalize the data
     scaler = MinMaxScaler()
 
-    # Normalize columns
     df_combined['volatility'] = scaler.fit_transform(df_combined[['volatility']].astype(float))
     df_combined['expense_ratio'] = scaler.fit_transform(df_combined[['expense_ratio']].astype(float))
     df_combined['aum'] = scaler.fit_transform(df_combined[['aum']].astype(float))
     df_combined['portfolio_turnover'] = scaler.fit_transform(df_combined[['portfolio_turnover']].astype(float))
 
-    # Invert volatility and expense ratio to match lower is better
     df_combined['volatility'] = 1 - df_combined['volatility']
     df_combined['expense_ratio'] = 1 - df_combined['expense_ratio']
 
-    # Calculate return score with more weight given to longer-term returns
     df_combined['return_score'] = (0.5 * df_combined['returns_5_year'].fillna(0) + 0.3 * df_combined['returns_3_year'].fillna(0) + 0.2 * df_combined['returns_1_year'].fillna(0))
-
-    # Normalize return score
     df_combined['return_score'] = scaler.fit_transform(df_combined[['return_score']])
 
-    # Final score calculation
     df_combined['final_score'] = 0.4 * df_combined['return_score'] + 0.3 * df_combined['volatility'] + 0.2 * df_combined['expense_ratio'] + 0.1 * df_combined['aum']
 
-    # Get top 5 funds based on the final score
     top_5_funds = df_combined.nlargest(5, 'final_score')
 
-    top_5_funds_list = top_5_funds[['isin', 'code', 'name', 'final_score', 'fund_category', 'nav_value', 'returns', 'nav_date', 'fund_type', 'plan', 'fund_manager', 'crisil_rating', 'investment_objective', 'maturity_type']].to_dict(orient='records')
+    top_5_funds_list = top_5_funds[['isin', 'code', 'name', 'final_score', 'fund_category', 'nav_value', 'returns', 'nav_date', 'expense_ratio', 'fund_type', 'plan', 'fund_manager', 'crisil_rating', 'investment_objective', 'maturity_type']].to_dict(orient='records')
+    
+    top_5_funds_cache = top_5_funds.to_dict(orient='records')
+
     return jsonify(top_5_funds_list)
+
+
 
 
 if __name__ == '__main__':
