@@ -8,7 +8,8 @@ const localStorageMiddleware = (store) => (next) => (action) => {
   const result = next(action);
 
   if (action.type === "selected/fetchMFData/pending" ||
-    action.type === "selected/removeFund") {
+    action.type === "selected/removeFund" ||
+    action.type === "selected/fetchMFData/fulfilled") {
 
     const selected = {
       schemeName: store.getState().selected.schemeName,

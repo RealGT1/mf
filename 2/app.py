@@ -183,5 +183,42 @@ def recommend():
     return jsonify(top_5_funds_list)
 
 
+
+
+
+@app.route('/api/get-schema', methods=['GET'])
+def get_schema():
+    isin = request.args.get('isin')
+    if not isin:
+        return jsonify({'error': 'ISIN not provided'}), 400
+    
+    # Load the Excel data inside the function
+    try:
+        excel_data = pd.read_excel('./SchemaCode.xlsx') # Debug: Print first few rows of the dataframe
+    except FileNotFoundError:
+        return jsonify({'error': 'Excel file not found'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    # Filter the dataframe to get the required schema details
+    try:
+        # Strip whitespace from the ISIN column
+        excel_data['isin'] = excel_data['isin'].str.strip()
+        
+        matching_row = excel_data[excel_data['isin'] == isin]
+        if matching_row.empty:
+            return jsonify({'error': 'ISIN not found'}), 404
+
+        schema_name = matching_row.iloc[0, 1]  # Column B (schemeName)
+        schema_code = int(matching_row.iloc[0, 2])  # Column C (schemeCode), converted to int
+
+        return jsonify({'schemaName': schema_name, 'schemaCode': schema_code})
+    except IndexError:
+        return jsonify({'error': 'Error processing the Excel file columns'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -35,10 +35,14 @@ const selectedSlice = createSlice({
   initialState,
   reducers: {
     setFunds: (state, action) => {
-      state.fund = action.payload;
+      const { schemeName, schemeCode } = action.payload;
+      state.schemeName = schemeName;
+      state.schemeCode = schemeCode;
     },
+
+    // Clear the initialState.data array on clearFunds
     clearFunds: (state) => {
-      state.fund = {};
+      state.data = [];
     }
   },
   extraReducers(builder) {
