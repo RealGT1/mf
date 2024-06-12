@@ -15,9 +15,6 @@ function App() {
         <Route path='/questions' element={<Questions />} />
         <Route path="/result" element={<Resulttest />} />
         <Route path="/fund/:isin" element={<FundDetails />} />
-        <Route path="/a/*" element={<Layout />}>
-          <Route path="*" element={<ChartWrapper />} />
-        </Route>
       </Routes>
     </div>
   )

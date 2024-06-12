@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "./app.css";
 import Choice5 from "./Choice5";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function Test() {
 
@@ -76,7 +77,9 @@ export default function Test() {
         <>
           <div className="question-section">
             <div className="question-count">
+              <span><Link to={"/"}><ArrowBackIcon /></Link></span>
               <span>Question {currentQuestion + 1}</span>/{6}
+
             </div>
             <div className="question-text">
               <h2>{questions[currentQuestion].questionText}</h2>

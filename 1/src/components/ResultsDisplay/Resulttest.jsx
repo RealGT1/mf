@@ -53,11 +53,14 @@ const Resulttest = () => {
         alignItems: 'center',
         height: '90vh',
       }}>
-        <HashLoader color="#36d7b7" style={{ marginRight: '20px' }} />
+        <div style={{ marginRight: '20px' }}>
+          <HashLoader color="#36d7b7" />
+        </div>
         Finding the best funds for you...
       </div>
     );
   }
+
 
   if (error) {
     return <div>{error}</div>;
