@@ -183,7 +183,5 @@ def recommend():
     return jsonify(top_5_funds_list)
 
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
