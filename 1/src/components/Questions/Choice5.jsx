@@ -10,7 +10,7 @@ export default function Choice5({ initialselectedOptions }) {
       answerOptions: [
         {
           answerText:
-            "Stock Market Growth: Investing mainly in the Stocks to achieve higher growth, albeit with higher risk.",
+            "Stock Market Growth: Investing mainly in the Stocks to achieve higher growth, with higher risk.",
           key: "option1",
         },
         {
@@ -30,7 +30,7 @@ export default function Choice5({ initialselectedOptions }) {
         },
         {
           answerText:
-            "Long-term Goals: Retirement or education savings, which often have a mix of growth and stability.",
+            "Long-term Goals: Retirement or education savings, with mix of growth and stability.",
           key: "option5",
         },
       ],
@@ -60,7 +60,7 @@ export default function Choice5({ initialselectedOptions }) {
         },
         {
           answerText:
-            "Risk and Flexibility: Investing or shifting between across various markets based on market conditions.",
+            "Risk and Flexibility: Investing across various markets based on market conditions.",
           key: "c",
         },
         { answerText: "Tax Efficiency: Looking for tax-saving options.", key: "d", },
@@ -106,7 +106,7 @@ export default function Choice5({ initialselectedOptions }) {
         },
         {
           answerText:
-            "Aggressive Growth with Balance: Balancing growth potential with a more aggressive investment strategy.",
+            "Balancing growth potential with a more aggressive investment strategy.",
           key: "f",
         },
       ],

@@ -62,8 +62,15 @@ const FundDetails = () => {
 
 
             <div className="container mx-auto px-4 py-8 mt-12">
-                <div className=" shadow-md rounded-lg p-6 bg-green-50">
-                    <h2 className="text-2xl font-bold mb-4">{fund.name}</h2>
+                <div className=" shadow-md rounded-lg p-4 bg-green-50">
+                    <h2 className="text-2xl font-bold mb-2">
+                        {fund.name}
+                        <span className="text-sm font-normal block">
+                            {fund.fund_category} - {fund.fund_type} - {fund.crisil_rating}
+                        </span>
+                    </h2>
+
+
                 </div>
 
                 <div>
@@ -77,7 +84,7 @@ const FundDetails = () => {
                     <div className="bg-green-50 shadow-md rounded-lg p-6 flex-1">
                         <h3 className="text-lg font-semibold mb-2">NAV Date and NAV Value</h3>
                         <p><strong>NAV Date:</strong> {fund.nav_date}</p>
-                        <p><strong>NAV Value:</strong> {fund.nav_value}</p>
+                        <p><strong>NAV Value:</strong> ₹ {fund.nav_value}</p>
                     </div>
                     {/* Box 2: Fund Manager */}
                     <div className="bg-white shadow-md rounded-lg p-6 flex-1">
